@@ -20,8 +20,8 @@ export class LoginComponent {
 
   async login() {
     try {
-      let resp = await this.authService.loginWithUserAndPassword(this.username, this.password);
-      console.log(resp);
+      let resp: any = await this.authService.loginWithUserAndPassword(this.username, this.password);
+      localStorage.setItem('token', resp['token']);
       this.router.navigateByUrl('/todos');
     } catch (e) {
       alert('Login failed');
