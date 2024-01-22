@@ -1,10 +1,16 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../environments/environment';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    FormsModule,
+    HttpClientModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -12,30 +18,27 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
+  constructor(private http: HttpClient) { }
+
   async login() {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      "username": this.username,
-      "password": this.password
-    });
-
-    const requestOptions: RequestInit = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
     try {
-      let resp = await fetch("http://localhost:8000/login/", requestOptions);
-      let json = await resp.json();
-      localStorage.setItem('token', json.token);
+      let resp = await this.loginWithUserAndPassword(this.username, this.password);
+      console.log(resp);
       // Redirect
       //deactivate form inputs
     } catch (e) {
       console.log(e);
     }
+  }
+
+
+  loginWithUserAndPassword(username: string, password: string) {
+    const url = environment.baseUrl + '/login/';
+    console.log(environment.baseUrl)
+    const body = {
+      "username": username,
+      "password": password
+    }
+    return lastValueFrom(this.http.post(url, body));
   }
 }
