@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,15 +16,15 @@ export class LoginComponent {
   username: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   async login() {
     try {
       let resp = await this.authService.loginWithUserAndPassword(this.username, this.password);
       console.log(resp);
-      // Redirect
-      //deactivate form inputs
+      this.router.navigateByUrl('/todos');
     } catch (e) {
+      alert('Login failed');
       console.log(e);
     }
   }
