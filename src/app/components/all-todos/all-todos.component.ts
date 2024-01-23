@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { lastValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Todo } from '../../models/todos.interfaces';
 
 @Component({
   selector: 'app-all-todos',
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './all-todos.component.scss'
 })
 export class AllTodosComponent {
-  todos: any = []
+  todos: Todo[] = []
   error: string = '';
   
 
@@ -32,18 +33,29 @@ export class AllTodosComponent {
   
   loadTodos() {
     const url = environment.baseUrl + '/todos/';
-    return lastValueFrom(this.http.get(url));
+    return lastValueFrom(this.http.get<Todo[]>(url));
   }
 
 
-  async toggleTodoStatus(todo: any) {
+  async toggleTodoStatus(todo: Todo) {
     todo.checked = !todo.checked;
   
     try {
       const url = environment.baseUrl + '/todos/' + todo.id + '/';
       await lastValueFrom(this.http.put(url, { checked: todo.checked }));
     } catch (e) {
-      console.error('Error updating todo status:', e);
+      this.error = 'Fehler beim updaten des erledigt Status';
+    }
+  }
+
+
+  async deleteTodo(todo: Todo) {
+    try {
+      const url = environment.baseUrl + '/todos/' + todo.id + '/';
+      await lastValueFrom(this.http.delete(url));
+      this.todos = this.todos.filter((t: { id: number; }) => t.id !== todo.id);
+    } catch (e) {
+      console.error('Error deleting todo:', e);
     }
   }
 }
