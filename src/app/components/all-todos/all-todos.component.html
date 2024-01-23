@@ -1,5 +1,5 @@
 <h1>{{ error }}</h1>
 <div *ngFor="let todo of todos">
-  <input type="checkbox" [checked]="todo.checked">
+  <input type="checkbox" [checked]="todo.checked" (change)="toggleTodoStatus(todo)">
   {{ todo.title }}
 </div>
