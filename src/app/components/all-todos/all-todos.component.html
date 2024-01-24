@@ -4,3 +4,7 @@
   {{ todo.title }}
   <div (click)="deleteTodo(todo)">delete</div>
 </div>
+<form (submit)="addTodo()">
+  <input [(ngModel)]="title" name="title" placeholder="New title" required>
+  <button type="submit">Add Todo</button>
+</form>
